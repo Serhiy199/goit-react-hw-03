@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
-import ContactForm from './components/ContactForm';
-import SearchBox from './components/SearchBox';
-import ContactList from './components/ContactList';
+import ContactForm from './components/ContactForm/ContactForm';
+import SearchBox from './components/SearchBox/SearchBox';
+import ContactList from './components/ContactList/ContactList';
 const listContacts = [
     { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
     { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
@@ -20,7 +20,9 @@ function App() {
     const [filterContacts, setFiltrContacts] = useState('');
 
     const addContact = newContact => {
-        setContacts(listContacts => [...listContacts, newContact]);
+        setContacts(listContacts => {
+            return [...listContacts, newContact];
+        });
     };
 
     const visibleContacts = contacts.filter(contact =>
