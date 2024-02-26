@@ -1,10 +1,7 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
-import { Formik, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-// import ContactForm from './components/ContactForm';
+
+import ContactForm from './components/ContactForm';
 import SearchBox from './components/SearchBox';
 import ContactList from './components/ContactList';
 const listContacts = [
@@ -15,19 +12,35 @@ const listContacts = [
 ];
 
 function App() {
-    const [contacts, setContacts] = useState(listContacts);
+    const [contacts, setContacts] = useState(() => {
+        const savedContacts = window.localStorage.getItem('saved-contacts');
+        return savedContacts !== null ? JSON.parse(savedContacts) : listContacts;
+    });
+
     const [filterContacts, setFiltrContacts] = useState('');
+
+    const addContact = newContact => {
+        setContacts(listContacts => [...listContacts, newContact]);
+    };
 
     const visibleContacts = contacts.filter(contact =>
         contact.name.toLowerCase().includes(filterContacts.toLowerCase())
     );
+    const deleteContact = contactId => {
+        setContacts(prevContact => {
+            return prevContact.filter(contact => contact.id !== contactId);
+        });
+    };
 
+    useEffect(() => {
+        localStorage.setItem('saved-contacts', JSON.stringify(contacts));
+    }, [contacts]);
     return (
         <>
             <h1>Phonebook</h1>
-            {/* <ContactForm /> */}
+            <ContactForm onContact={addContact} />
             <SearchBox value={filterContacts} onFilterContacts={setFiltrContacts} />
-            <ContactList listContacts={visibleContacts} />
+            <ContactList listContacts={visibleContacts} onDelete={deleteContact} />
         </>
     );
 }
